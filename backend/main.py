@@ -69,7 +69,4 @@ def predict(data: Employee):
         "feature_importance_image": "http://127.0.0.1:8000/model/feature_importance.png"
     }
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-
-# Serve React build
 app.mount("/", StaticFiles(directory="dist", html=True), name="frontend")

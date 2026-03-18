@@ -16,10 +16,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Serve images
+# Serve model images
 app.mount("/model", StaticFiles(directory="model"), name="model")
 
-# Load trained model
+# Load model
 model = joblib.load("model/promotion_model.pkl")
 
 
@@ -34,15 +34,10 @@ class Employee(BaseModel):
     salary: int
 
 
-@app.get("/")
-def home():
-    return {"message": "Promotion Prediction API Running"}
-
-
 @app.post("/predict")
 def predict(data: Employee):
 
-    features = np.array([[
+    features = np.array([[ 
         data.satisfaction_level,
         data.last_evaluation,
         data.number_project,
@@ -65,8 +60,12 @@ def predict(data: Employee):
     return {
         "prediction": result,
         "promotion_probability": round(probability * 100, 2),
-        "decision_tree_image": "http://127.0.0.1:8000/model/decision_tree.png",
-        "feature_importance_image": "http://127.0.0.1:8000/model/feature_importance.png"
+
+        # ✅ FIXED (NO localhost)
+        "decision_tree_image": "/model/decision_tree.png",
+        "feature_importance_image": "/model/feature_importance.png"
     }
-from fastapi.staticfiles import StaticFiles
+
+
+# ✅ SERVE FRONTEND (MUST BE LAST)
 app.mount("/", StaticFiles(directory="dist", html=True), name="frontend")
